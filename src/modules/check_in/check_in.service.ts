@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common"
 import { CheckInRepository } from "./check_in.repository"
 import { Invitation } from "src/entities/invitation.entity"
+import { RemoveTimezoneString } from "src/helper/datetime"
 
 @Injectable()
 export class CheckInService {
@@ -15,7 +16,8 @@ export class CheckInService {
         }
 
         if(invitation.check_in_time) {
-            throw new ForbiddenException(`you already checked in at ${invitation.check_in_time}`)
+            const redeemedOn = await RemoveTimezoneString(invitation.check_in_time)
+            throw new ForbiddenException(`you already checked in at ${redeemedOn}`)
         }
 
         invitation.check_in_time = new Date()
